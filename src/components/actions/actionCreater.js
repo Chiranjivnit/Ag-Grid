@@ -9,7 +9,6 @@ export const getData = data => {
 };
 
 export const onSelectedChangeData = (data) => {
-    console.log(data)
   return dispatch => dispatch(getData(data));
 };
 

@@ -3,7 +3,10 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 import { connect } from "react-redux";
-import { onSelectedChangeData, onSelectedLeafletData } from "../actions/actionCreater";
+import {
+  onSelectedChangeData,
+  onSelectedLeafletData
+} from "../actions/actionCreater";
 
 import { data } from "../store/gridData";
 
@@ -13,32 +16,30 @@ class AgGrid extends Component {
     this.state = {
       columnDefs: [],
       rowData: [],
-      leafletData:[]
+      leafletData: []
     };
   }
 
   onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
-      this.setState({ rowData: data });
-    };
+    this.setState({ rowData: data });
+  };
 
-    onSelectionChanged=()=> {
-      var selectedRows = this.gridApi.getSelectedRows();
-      var selectedRowsString = "";
-      selectedRows.forEach(function(selectedRow, index) {
-        if (index !== 0) {
-          selectedRowsString += ", ";
-        }
-        selectedRowsString += selectedRow.make;
-      });
-      document.querySelector("#selectedRows").innerHTML = selectedRowsString;
-      const leafletData=selectedRows
-      this.setState({leafletData:leafletData})
-      console.log(leafletData)
-      this.props.onSelectedLeafletData (leafletData)
-      
-    }
+  onSelectionChanged = () => {
+    var selectedRows = this.gridApi.getSelectedRows();
+    var selectedRowsString = "";
+    selectedRows.forEach(function(selectedRow, index) {
+      if (index !== 0) {
+        selectedRowsString += ", ";
+      }
+      selectedRowsString += selectedRow.make;
+    });
+    document.querySelector("#selectedRows").innerHTML = selectedRowsString;
+    const leafletData = selectedRows;
+    this.setState({ leafletData: leafletData[0] });
+    this.props.onSelectedLeafletData(this.state.leafletData);
+  };
 
   onQuickFilterChanged = () => {
     this.gridApi.setQuickFilter(document.getElementById("quickFilter").value);
@@ -56,29 +57,24 @@ class AgGrid extends Component {
 
   componentDidMount() {
     this.props.onSelectedChangeData(data);
-    //this.props.onSelectedLeafletData(leafletData);
-   //console.log(leafletData)
-   //console.log (leafletData)
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.AgGriddata !== this.props.AgGriddata) {
-      console.log(this.props.AgGriddata.data)
+    const { AgGriddata } = nextProps;
+    if (AgGriddata !== this.props.AgGriddata) {
       this.setState({
-        columnDefs: this.props.AgGriddata.columnDefs,
-        rowData: this.props.AgGriddata.rowData,
-        rowSelection:this.props.AgGriddata.rowSelection,
-        
+        columnDefs: AgGriddata.columnDefs,
+        rowData: AgGriddata.rowData,
+        rowSelection: AgGriddata.rowSelection
       });
     }
   }
 
   render() {
-    console.log(this.props)
     const { AgGriddata } = this.props;
     return (
       <div>
-        <div class="test-container">
-          <div class="test-header">
+        <div className="test-container">
+          <div className="test-header">
             Selection:
             <span id="selectedRows" />
           </div>
@@ -94,7 +90,7 @@ class AgGrid extends Component {
               columnDefs={AgGriddata.columnDefs || []}
               rowData={AgGriddata.rowData || []}
               rowSelection={AgGriddata.rowSelection || []}
-              onGridReady={ this.onGridReady }
+              onGridReady={this.onGridReady}
               onSelectionChanged={this.onSelectionChanged}
               onQuickFilterChanged={this.onQuickFilterChanged}
               isRowSelectable={this.state.isRowSelectable}
@@ -115,17 +111,16 @@ class AgGrid extends Component {
 }
 
 const mapStateToProps = state => {
-  console.log(state)
   return {
-    AgGriddata: state.AgGridReducer,
-    LeafletData:state.AgGridReducer
+    AgGriddata: state.AgGridReducer.data
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSelectedChangeData: (data) => dispatch(onSelectedChangeData(data)),
-    onSelectedLeafletData:(leafletData)=>dispatch(onSelectedLeafletData(leafletData))
+    onSelectedChangeData: data => dispatch(onSelectedChangeData(data)),
+    onSelectedLeafletData: leafletData =>
+      dispatch(onSelectedLeafletData(leafletData))
   };
 };
 
