@@ -13,12 +13,15 @@ class Leaflet extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { leafletData } = nextProps;
+    const {
+      leafletData,
+      leafletData: { lat, lng, zoom }
+    } = nextProps;
     if (leafletData !== this.props.leafletData) {
       this.setState({
-        lat: leafletData.lat,
-        lng: leafletData.lng,
-        zoom: leafletData.zoom
+        lat,
+        lng,
+        zoom
       });
     }
   }
