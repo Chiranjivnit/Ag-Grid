@@ -2,9 +2,8 @@ import React, { Component } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-
 import { connect } from "react-redux";
-import { onSelectedChangeData } from "../actions/actionCreater";
+import { onSelectedChangeData, onSelectedLeafletData } from "../actions/actionCreater";
 
 import { data } from "../store/gridData";
 
@@ -14,56 +13,40 @@ class AgGrid extends Component {
     this.state = {
       columnDefs: [],
       rowData: [],
-      defaultColDef: {
-        width: 200,
-        sortable: true,
-        resizable: true,
-        filter: true
-      },
-      rowMultiSelectWithClick: true,
-      isRowSelectable: rowNode => {
-        return rowNode.data ? rowNode.data.price < 1100000 : false;
-      }
+      leafletData:[]
     };
   }
 
   onGridReady = params => {
     this.gridApi = params.api;
     this.gridColumnApi = params.columnApi;
-    var rowData = this.props.agGriddata.rowData;
-    this.setState({ rowData });
-  };
+      this.setState({ rowData: data });
+    };
 
-  onSelectedChanged = () => {
-    var selectedRows = this.gridApi.getSelectedRows();
-    var selectedRowsString = "";
-    selectedRows.forEach((selectedRow, index) => {
-      if (index !== 0) {
-        selectedRowsString += ", ";
-      }
-      selectedRowsString += selectedRow.make;
-    });
-    document.querySelector("#selectedRows").innerHTML = selectedRowsString;
-  };
+    onSelectionChanged=()=> {
+      var selectedRows = this.gridApi.getSelectedRows();
+      var selectedRowsString = "";
+      selectedRows.forEach(function(selectedRow, index) {
+        if (index !== 0) {
+          selectedRowsString += ", ";
+        }
+        selectedRowsString += selectedRow.make;
+      });
+      document.querySelector("#selectedRows").innerHTML = selectedRowsString;
+      const leafletData=selectedRows
+      this.setState({leafletData:leafletData})
+      console.log(leafletData)
+      this.props.onSelectedLeafletData (leafletData)
+      
+    }
 
   onQuickFilterChanged = () => {
     this.gridApi.setQuickFilter(document.getElementById("quickFilter").value);
   };
 
-  onRowSelected = event => {
-    window.alert(
-      "row " + event.node.data.make + " selected = " + event.node.selected
-    );
-  };
-
-  onSelectionChanged = event => {
-    var rowCount = event.api.getSelectedNodes().length;
-    window.alert("selection changed, " + rowCount + " rows selected");
-  };
-
   selectAllMaker = () => {
     this.gridApi.forEachNode(node => {
-      var rowData = this.props.agGriddata.rowData;
+      var rowData = this.props.AgGriddata.rowData;
       this.setState({ rowData });
       if (node.data.make === "Ferrari") {
         node.setSelected(true);
@@ -73,21 +56,27 @@ class AgGrid extends Component {
 
   componentDidMount() {
     this.props.onSelectedChangeData(data);
+    //this.props.onSelectedLeafletData(leafletData);
+   //console.log(leafletData)
+   //console.log (leafletData)
   }
   componentWillReceiveProps(nextProps) {
-    if (nextProps.agGriddata !== this.props.agGriddata) {
-      //Perform some operation
+    if (nextProps.AgGriddata !== this.props.AgGriddata) {
+      console.log(this.props.AgGriddata.data)
       this.setState({
-        columnDefs: this.props.agGriddata.columnDefs,
-        rowData: this.props.agGriddata.rowData
+        columnDefs: this.props.AgGriddata.columnDefs,
+        rowData: this.props.AgGriddata.rowData,
+        rowSelection:this.props.AgGriddata.rowSelection,
+        
       });
     }
   }
 
   render() {
-    const { agGriddata } = this.props;
+    console.log(this.props)
+    const { AgGriddata } = this.props;
     return (
-      <div style={{ width: "100px", height: "100px" }}>
+      <div>
         <div class="test-container">
           <div class="test-header">
             Selection:
@@ -96,27 +85,23 @@ class AgGrid extends Component {
           <div
             id="myGrid"
             style={{
-              height: "300px",
-              width: "600px"
+              height: "400px",
+              width: "1200px"
             }}
             className="ag-theme-balham"
           >
             <AgGridReact
-              columnDefs={agGriddata.columnDefs || []}
-              // rowSelection={this.st}
-              onGridReady={this.onGridReady}
-              onSelectedChanged={this.onSelectedChanged}
-              rowData={agGriddata.rowData || []}
-              rowSelection="multiple"
+              columnDefs={AgGriddata.columnDefs || []}
+              rowData={AgGriddata.rowData || []}
+              rowSelection={AgGriddata.rowSelection || []}
+              onGridReady={ this.onGridReady }
+              onSelectionChanged={this.onSelectionChanged}
               onQuickFilterChanged={this.onQuickFilterChanged}
               isRowSelectable={this.state.isRowSelectable}
-              onRowSelected={this.onRowSelected}
-              onSelectionChanged={this.onSelectionChanged}
             />
           </div>
         </div>
-        <div style={{ position: "absolute", top: "0px", right: "210px" }}>
-          <button onClick={this.selectAllMaker}>Select all Maker</button>
+        <div style={{ position: "absolute", top: "10px", left: "1027px" }}>
           <input
             type="text"
             onInput={this.onQuickFilterChanged}
@@ -130,14 +115,17 @@ class AgGrid extends Component {
 }
 
 const mapStateToProps = state => {
+  console.log(state)
   return {
-    agGriddata: state.agGridReducer
+    AgGriddata: state.AgGridReducer,
+    LeafletData:state.AgGridReducer
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSelectedChangeData: data => dispatch(onSelectedChangeData(data))
+    onSelectedChangeData: (data) => dispatch(onSelectedChangeData(data)),
+    onSelectedLeafletData:(leafletData)=>dispatch(onSelectedLeafletData(leafletData))
   };
 };
 

@@ -1,14 +1,22 @@
 import { ON_SELECTED_CHANGE_DATA } from "../../actions/actionType";
+import { ON_SELECTED_LEAFLET_DATA } from "../../actions/actionType";
 
-const INITIAL_STATE = {
-  data: {}
-};
+const inititialState = {
+    data:[],
+    leafletData:[]
+}
 
-export default function agGridReducer(state = INITIAL_STATE, action) {
-  switch (action.type) {
-    case ON_SELECTED_CHANGE_DATA:
-      return action.data;
+export const  AgGridReducer=(state=inititialState,action)=>{
+    
+  switch (action.type){
+
+    case ON_SELECTED_CHANGE_DATA: 
+    return action.data;
+
+    case  ON_SELECTED_LEAFLET_DATA:
+     return action.leafletData;
+
     default:
-      return state;
+    return state
   }
 }
