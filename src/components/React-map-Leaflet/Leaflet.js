@@ -11,46 +11,21 @@ class Leaflet extends Component {
       make: [],
       lat: 51.505, // lat:[]
       lng: -0.09, // lan:[]
-      zoom: 13,
+      zoom: 8,
       leafletData: [] // zoom:[]
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const {
-      leafletData,
-      leafletData: { lat, lng, zoom, make, price, model }
-    } = nextProps;
+    const { leafletData } = nextProps;
     if (leafletData !== this.props.leafletData) {
       this.setState({
-        lat,
-        lng,
-        zoom,
-        make,
-        price,
-        model
+        leafletData
       });
-      console.log(leafletData)
     }
   }
 
-  addMultiDataToMap = () => {
-    // const { leafletData } = this.props
-    const data = this.props.leafletData
-    // this.setState({ leafletData: leafletData })
-    console.log(data)
-    data.map((leafData, index) => {
-      return this.state.leafletData.push(<Marker position={leafData.lat && leafData.lng} key={index}>
-        <Popup>
-          welcome  <strong style={{ textSizeAdjust: "80%" }}>{this.state.make}  {this.state.model}</strong>  DreamzsCar <br /> check out price  <strong>{this.state.price}</strong>  for your  dream car  <strong>{this.state.make} {this.state.model}</strong>
-        </Popup>
-      </Marker>)
-    })
-    //console.log (leafletData);
-  }
-
   render() {
-    console.log("leafletData",this.props.leafletData)
     const position = [this.state.lat, this.state.lng];
     return (
       <div id="mapid" style={{ height: "180px" }}>
@@ -63,23 +38,37 @@ class Leaflet extends Component {
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
           />
-          {/* <Marker position={position} 
-        
-          >
-            <Popup>
-              welcome  <strong style={{ textSizeAdjust: "80%" }}>{this.state.make}  {this.state.model}</strong>  DreamzsCar <br /> check out price  <strong>{this.state.price}</strong>  for your  dream car  <strong>{this.state.make} {this.state.model}</strong>
-            </Popup>
-          </Marker> */}
-
+          <RenderMap leafletData={this.state.leafletData} />
         </Map>
-        <button onClick={this.addMultiDataToMap}>Hii</button>
       </div>
     );
   }
 }
 
+const RenderMap = props => {
+  const { leafletData } = props;
+
+  return leafletData.map(item => {
+    const position = [item.lat, item.lng];
+    return (
+      <Marker position={position} key={item.price}>
+        <Popup>
+          welcome
+          <strong style={{ textSizeAdjust: "80%" }}>
+            {item.make} {item.model}
+          </strong>
+          DreamzsCar <br /> check out price
+          <strong>{item.price}</strong> for your dream car
+          <strong>
+            {item.make} {item.model}
+          </strong>
+        </Popup>
+      </Marker>
+    );
+  });
+};
+
 const mapStateToProps = state => {
-  console.log(state)
   return {
     leafletData: state.AgGridReducer.leafletData
   };

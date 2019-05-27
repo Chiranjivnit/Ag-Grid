@@ -40,7 +40,7 @@ class AgGrid extends Component {
     document.querySelector("#selectedRows").innerHTML = selectedRowsString;
     
     this.props.onSelectedLeafletData(selectedRows);
-   // console.log(this.state.newData)
+
 
   };
 
@@ -61,6 +61,7 @@ class AgGrid extends Component {
   componentDidMount() {
     this.props.onSelectedChangeData(data);
   }
+
   componentWillReceiveProps(nextProps) {
     const { AgGriddata } = nextProps;
     if (AgGriddata !== this.props.AgGriddata) {
