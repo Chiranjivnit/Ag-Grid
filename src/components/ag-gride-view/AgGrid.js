@@ -3,6 +3,7 @@ import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
 import { connect } from "react-redux";
+import Leaflet from '../React-map-Leaflet/Leaflet'
 import {
   onSelectedChangeData,
   onSelectedLeafletData
@@ -16,7 +17,8 @@ class AgGrid extends Component {
     this.state = {
       columnDefs: [],
       rowData: [],
-      leafletData: []
+      leafletData: [],
+      newData:[]
     };
   }
 
@@ -29,16 +31,17 @@ class AgGrid extends Component {
   onSelectionChanged = () => {
     var selectedRows = this.gridApi.getSelectedRows();
     var selectedRowsString = "";
-    selectedRows.forEach(function(selectedRow, index) {
+    selectedRows.forEach(function (selectedRow, index) {
       if (index !== 0) {
         selectedRowsString += ", ";
       }
       selectedRowsString += selectedRow.make;
     });
     document.querySelector("#selectedRows").innerHTML = selectedRowsString;
-    const leafletData = selectedRows;
-    this.setState({ leafletData: leafletData[0] });
-    this.props.onSelectedLeafletData(this.state.leafletData);
+    
+    this.props.onSelectedLeafletData(selectedRows);
+   // console.log(this.state.newData)
+
   };
 
   onQuickFilterChanged = () => {
@@ -105,6 +108,7 @@ class AgGrid extends Component {
             placeholder="quick filter..."
           />
         </div>
+        <Leaflet leafletData={this.state.leafletData} />
       </div>
     );
   }
@@ -119,8 +123,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onSelectedChangeData: data => dispatch(onSelectedChangeData(data)),
-    onSelectedLeafletData: leafletData =>
-      dispatch(onSelectedLeafletData(leafletData))
+    onSelectedLeafletData: leafletData => dispatch(onSelectedLeafletData(leafletData))
   };
 };
 

@@ -7,11 +7,11 @@ import thunk from "redux-thunk";
 import { Provider } from "react-redux";
 import { createStore, combineReducers, applyMiddleware } from "redux";
 
-import {AgGridReducer} from "./components/store/reducer/AgGridReducer";
+import { AgGridReducer } from "./components/store/reducer/AgGridReducer";
 //import { leafLetReducer } from "./components/store/reducer/leafLetReducer";
 
 const rootReducer = combineReducers({
-  AgGridReducer :AgGridReducer,
+  AgGridReducer: AgGridReducer,
   //leafLetReducer:leafLetReducer
 });
 
