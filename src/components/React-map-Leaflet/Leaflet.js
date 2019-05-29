@@ -16,6 +16,39 @@ class Leaflet extends Component {
     };
   }
 
+  getMinLng = () => {
+    return this.state.leafletData.length !== 0
+      ? this.state.leafletData.reduce(
+          (min, p) => (p.lng < min ? p.lng : min),
+          this.state.leafletData[0].lng
+        )
+      : 0;
+  };
+  getMaxLng = () => {
+    return this.state.leafletData.length !== 0
+      ? this.state.leafletData.reduce(
+          (max, p) => (p.lng > max ? p.lng : max),
+          this.state.leafletData[0].lng
+        )
+      : 0;
+  };
+  getMinLat = () => {
+    return this.state.leafletData.length !== 0
+      ? this.state.leafletData.reduce(
+          (min, p) => (p.lat < min ? p.lat : min),
+          this.state.leafletData[0].lat
+        )
+      : 0;
+  };
+  getMaxLat = () => {
+    return this.state.leafletData.length !== 0
+      ? this.state.leafletData.reduce(
+          (max, p) => (p.lat > max ? p.lat : max),
+          this.state.leafletData[0].lat
+        )
+      : 0;
+  };
+
   componentWillReceiveProps(nextProps) {
     const { leafletData } = nextProps;
     if (leafletData !== this.props.leafletData) {
@@ -24,7 +57,8 @@ class Leaflet extends Component {
       });
     }
   }
-  renderMap = leafletData => {  
+
+  renderMap = leafletData => {
     return leafletData.map(item => {
       const position = [item.lat, item.lng];
       return (
@@ -46,12 +80,27 @@ class Leaflet extends Component {
   };
 
   render() {
-    const position = [this.state.lat, this.state.lng];
+    var centerLat = (this.getMinLat() + this.getMaxLat()) / 2;
+    var distanceLat = this.getMaxLat() - this.getMinLat();
+    var bufferLat = distanceLat * 0.05;
+    var centerLong = (this.getMinLng() + this.getMaxLng()) / 2;
+    var distanceLong = this.getMaxLng() - this.getMinLng();
+    var bufferLong = distanceLong * 0.15;
+    console.log(
+      centerLat,
+      distanceLat,
+      bufferLat,
+      centerLong,
+      distanceLong,
+      bufferLong,
+      distanceLong
+    );
+    const position = [centerLat, centerLong];
     return (
       <div id="mapid" style={{ height: "180px" }}>
         <Map
           center={position}
-          zoom={this.state.zoom}
+          zoom={1}
           style={{ overflow: "hidden", height: "200%" }}
         >
           <TileLayer
@@ -64,8 +113,6 @@ class Leaflet extends Component {
     );
   }
 }
-
-
 
 const mapStateToProps = state => {
   return {
