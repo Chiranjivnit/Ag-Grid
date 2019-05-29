@@ -24,6 +24,26 @@ class Leaflet extends Component {
       });
     }
   }
+  renderMap = leafletData => {  
+    return leafletData.map(item => {
+      const position = [item.lat, item.lng];
+      return (
+        <Marker position={position} key={item.price}>
+          <Popup>
+            welcome
+            <strong style={{ textSizeAdjust: "80%" }}>
+              {item.make} {item.model}
+            </strong>
+            DreamzsCar <br /> check out price
+            <strong>{item.price}</strong> for your dream car
+            <strong>
+              {item.make} {item.model}
+            </strong>
+          </Popup>
+        </Marker>
+      );
+    });
+  };
 
   render() {
     const position = [this.state.lat, this.state.lng];
@@ -38,35 +58,14 @@ class Leaflet extends Component {
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.osm.org/{z}/{x}/{y}.png"
           />
-          <RenderMap leafletData={this.state.leafletData} />
+          {this.renderMap(this.state.leafletData)}
         </Map>
       </div>
     );
   }
 }
 
-const RenderMap = props => {
-  const { leafletData } = props;
 
-  return leafletData.map(item => {
-    const position = [item.lat, item.lng];
-    return (
-      <Marker position={position} key={item.price}>
-        <Popup>
-          welcome
-          <strong style={{ textSizeAdjust: "80%" }}>
-            {item.make} {item.model}
-          </strong>
-          DreamzsCar <br /> check out price
-          <strong>{item.price}</strong> for your dream car
-          <strong>
-            {item.make} {item.model}
-          </strong>
-        </Popup>
-      </Marker>
-    );
-  });
-};
 
 const mapStateToProps = state => {
   return {
