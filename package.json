@@ -6,7 +6,7 @@
     "ag-grid-community": "^20.2.0",
     "ag-grid-enterprise": "^20.2.0",
     "ag-grid-react": "^20.2.0",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "checkbox": "^0.0.1",
     "eslint": "^5.16.0",
     "leaflet": "^1.5.1",
